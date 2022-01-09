@@ -33,10 +33,10 @@ namespace EsriService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var response = await _client.GetAsync("https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Counties/FeatureServer/0/query?where=1%3D1&outFields=population%2C+state_name&returnGeometry=false&f=pjson");
+                var response = await _client.GetAsync("https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Counties/FeatureServer/0/query?where=STATE_NAME=%27Alabama%27&outFields=population%2C+state_name&returnGeometry=false&f=pjson");
                 var responseAsString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(responseAsString);
-                
+                await Task.Delay(1000000000, stoppingToken);
             }
         }
     }
