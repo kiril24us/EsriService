@@ -1,30 +1,21 @@
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http.Json;
-using EsriService.Models;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json.Linq;
-using System.Text.Json;
-using Newtonsoft.Json;
 using EsriService.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EsriService
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
-        private readonly IEsriService _esriService;
+        public IServiceScopeFactory _serviceScopeFactory;
         private HttpClient _client;
 
-        public Worker(ILogger<Worker> logger, IEsriService esriService)
+        public Worker(IServiceScopeFactory serviceScopeFactory)
         {
-            _logger = logger;
-            _esriService = esriService;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -45,9 +36,12 @@ namespace EsriService
             {
                 try
                 {
-                    var states = await _esriService.GetStatesFromDb();
-                    var isSuccess = await _esriService.GetStatesFromApi(_client);                 
-                    
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var esriService = scope.ServiceProvider.GetService<IEsriService>();
+                        await esriService.GetStatesFromApi(_client);
+
+                    }                                  
                 }
                 catch (Exception ex)
                 {

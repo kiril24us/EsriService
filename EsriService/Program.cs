@@ -48,11 +48,11 @@ namespace EsriService
                     optionBuilder.UseSqlServer(AppSettings.ConnectionString);
 
                     
-                    services.AddSingleton<AppDbContext>(d => new AppDbContext(optionBuilder.Options));
+                    services.AddScoped<AppDbContext>(d => new AppDbContext(optionBuilder.Options));
 
                     services.AddHostedService<Worker>();
-                    services.AddSingleton<IEsriService, EsriServices>();
-                    services.AddSingleton<IStateRepository, StateRepository>();
+                    services.AddScoped<IEsriService, EsriServices>();
+                    services.AddScoped<IStateRepository, StateRepository>();
                 });
     }
 }
