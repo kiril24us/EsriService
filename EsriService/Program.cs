@@ -1,3 +1,4 @@
+using EsriService.Repositories;
 using EsriService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -46,9 +47,12 @@ namespace EsriService
                     var optionBuilder = new DbContextOptionsBuilder<AppDbContext>();
                     optionBuilder.UseSqlServer(AppSettings.ConnectionString);
 
-                    services.AddScoped<AppDbContext>(d => new AppDbContext(optionBuilder.Options));
+                    
+                    services.AddSingleton<AppDbContext>(d => new AppDbContext(optionBuilder.Options));
 
                     services.AddHostedService<Worker>();
+                    services.AddSingleton<IEsriService, EsriServices>();
+                    services.AddSingleton<IStateRepository, StateRepository>();
                 });
     }
 }
